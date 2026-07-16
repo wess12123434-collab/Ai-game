@@ -31,6 +31,16 @@ if "choices" not in st.session_state:
     st.session_state.choices = []
 if "checked" not in st.session_state:
     st.session_state.checked = False
+if "answer" not in st.session_state:
+    st.session_state.answer = ""
+if "selected" not in st.session_state:
+    st.session_state.selected = None
+
+def next_question():
+    st.session_state.current, st.session_state.choices = new_question(words)
+    st.session_state.checked = False
+    st.session_state.answer = ""
+    st.session_state.selected = None
 
 st.title("📚 중학생용 영단어 게임")
 st.write("뜻에 맞는 영어 단어를 고르거나 직접 입력해 맞혀보세요. 점수는 맞힌 개수를 기준으로 계산됩니다.")
@@ -39,9 +49,7 @@ mode = st.radio("게임 모드 선택", ("객관식", "주관식 (입력)"))
 
 col1, col2 = st.columns([3,1])
 with col2:
-    if st.button("새 문제"):
-        st.session_state.current, st.session_state.choices = new_question(words)
-        st.session_state.checked = False
+    st.button("새 문제", on_click=next_question, key="next")
 
 if st.session_state.current is None:
     st.session_state.current, st.session_state.choices = new_question(words)
@@ -51,8 +59,8 @@ question = st.session_state.current
 st.markdown(f"**뜻:** {question['korean']}")
 
 if mode == "객관식":
-    choice = st.radio("정답을 고르세요", st.session_state.choices)
-    if st.button("확인") and not st.session_state.checked:
+    choice = st.radio("정답을 고르세요", st.session_state.choices, key="selected")
+    if st.button("확인", key="check") and not st.session_state.checked:
         st.session_state.checked = True
         st.session_state.total += 1
         if choice == question["english"]:
@@ -62,8 +70,8 @@ if mode == "객관식":
             st.error(f"아쉽습니다. 정답: {question['english']}")
 
 else:
-    ans = st.text_input("영어 단어를 입력하세요")
-    if st.button("확인") and not st.session_state.checked:
+    ans = st.text_input("영어 단어를 입력하세요", key="answer")
+    if st.button("확인", key="check") and not st.session_state.checked:
         st.session_state.checked = True
         st.session_state.total += 1
         if ans.strip().lower() == question["english"].lower():
