@@ -1,6 +1,8 @@
 import json
 import random
 import streamlit as st
+import requests
+from io import BytesIO
 
 st.set_page_config(page_title="영단어 게임 (중학생)", layout="centered")
 
@@ -98,7 +100,16 @@ with tab_bts:
     img_col, info_col = st.columns([2,3])
     img_url = f"https://source.unsplash.com/800x500/?bts,kpop,concert&sig={st.session_state.bts_seed}"
     with img_col:
-        st.image(img_url, use_column_width=True)
+        try:
+            resp = requests.get(img_url, timeout=5)
+            if resp.status_code == 200 and resp.content:
+                st.image(BytesIO(resp.content), use_column_width=True)
+            else:
+                st.warning("이미지를 불러오지 못했습니다. 대체 이미지를 표시합니다.")
+                st.image("https://via.placeholder.com/800x500?text=No+Image", use_column_width=True)
+        except Exception:
+            st.warning("이미지 요청 중 오류가 발생했습니다. 대체 이미지를 표시합니다.")
+            st.image("https://via.placeholder.com/800x500?text=No+Image", use_column_width=True)
         st.button("다른 사진 보기", on_click=refresh_bts, key="refresh_bts")
         st.caption("이미지 검색: Unsplash (검색어: bts, kpop, concert)")
     with info_col:
