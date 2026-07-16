@@ -42,45 +42,57 @@ def next_question():
     st.session_state.answer = ""
     st.session_state.selected = None
 
-st.title("📚 중학생용 영단어 게임")
-st.write("뜻에 맞는 영어 단어를 고르거나 직접 입력해 맞혀보세요. 점수는 맞힌 개수를 기준으로 계산됩니다.")
+st.title("📚 중학생용 영단어 게임 & BTS 소개")
 
-mode = st.radio("게임 모드 선택", ("객관식", "주관식 (입력)"))
+tab_vocab, tab_bts = st.tabs(["영단어", "BTS"])
 
-col1, col2 = st.columns([3,1])
-with col2:
-    st.button("새 문제", on_click=next_question, key="next")
+with tab_vocab:
+    st.write("뜻에 맞는 영어 단어를 고르거나 직접 입력해 맞혀보세요. 점수는 맞힌 개수를 기준으로 계산됩니다.")
 
-if st.session_state.current is None:
-    st.session_state.current, st.session_state.choices = new_question(words)
+    mode = st.radio("게임 모드 선택", ("객관식", "주관식 (입력)"))
 
-question = st.session_state.current
+    col1, col2 = st.columns([3,1])
+    with col2:
+        st.button("새 문제", on_click=next_question, key="next")
 
-st.markdown(f"**뜻:** {question['korean']}")
+    if st.session_state.current is None:
+        st.session_state.current, st.session_state.choices = new_question(words)
 
-if mode == "객관식":
-    choice = st.radio("정답을 고르세요", st.session_state.choices, key="selected")
-    if st.button("확인", key="check") and not st.session_state.checked:
-        st.session_state.checked = True
-        st.session_state.total += 1
-        if choice == question["english"]:
-            st.session_state.score += 1
-            st.success("정답입니다! 🎉")
-        else:
-            st.error(f"아쉽습니다. 정답: {question['english']}")
+    question = st.session_state.current
+    st.markdown(f"**뜻:** {question['korean']}")
 
-else:
-    ans = st.text_input("영어 단어를 입력하세요", key="answer")
-    if st.button("확인", key="check") and not st.session_state.checked:
-        st.session_state.checked = True
-        st.session_state.total += 1
-        if ans.strip().lower() == question["english"].lower():
-            st.session_state.score += 1
-            st.success("정답입니다! 🎉")
-        else:
-            st.error(f"아쉽습니다. 정답: {question['english']}")
+    if mode == "객관식":
+        choice = st.radio("정답을 고르세요", st.session_state.choices, key="selected")
+        if st.button("확인", key="check") and not st.session_state.checked:
+            st.session_state.checked = True
+            st.session_state.total += 1
+            if choice == question["english"]:
+                st.session_state.score += 1
+                st.success("정답입니다! 🎉")
+            else:
+                st.error(f"아쉽습니다. 정답: {question['english']}")
 
-st.write(f"점수: {st.session_state.score} / {st.session_state.total}")
+    else:
+        ans = st.text_input("영어 단어를 입력하세요", key="answer")
+        if st.button("확인", key="check") and not st.session_state.checked:
+            st.session_state.checked = True
+            st.session_state.total += 1
+            if ans.strip().lower() == question["english"].lower():
+                st.session_state.score += 1
+                st.success("정답입니다! 🎉")
+            else:
+                st.error(f"아쉽습니다. 정답: {question['english']}")
 
-st.write("---")
-st.write("힌트: '새 문제'를 눌러 다음 문제로 넘어가세요.")
+    st.write(f"점수: {st.session_state.score} / {st.session_state.total}")
+    st.write("---")
+    st.write("힌트: '새 문제'를 눌러 다음 문제로 넘어가세요.")
+
+with tab_bts:
+    st.header("BTS 소개")
+    st.write("BTS(방탄소년단)는 대한민국의 7인조 보이 그룹으로, 전 세계적으로 큰 인기를 얻고 있습니다.")
+    st.write("주요 정보:")
+    st.write("- 데뷔: 2013년")
+    st.write("- 멤버: RM, 진, 슈가, 제이홉, 지민, 뷔, 정국")
+    st.write("- 대표곡: 'Dynamite', 'Butter', 'Blood Sweat & Tears', 'Permission to Dance'")
+    st.write("더 알아보기:")
+    st.markdown("- [위키백과 - BTS](https://ko.wikipedia.org/wiki/BTS)\n- [공식 유튜브 채널](https://www.youtube.com/c/bangtantv)")
