@@ -42,6 +42,12 @@ def next_question():
     st.session_state.answer = ""
     st.session_state.selected = None
 
+if "bts_seed" not in st.session_state:
+    st.session_state.bts_seed = random.randint(1, 1_000_000)
+
+def refresh_bts():
+    st.session_state.bts_seed = random.randint(1, 1_000_000)
+
 st.title("📚 중학생용 영단어 게임 & BTS 소개")
 
 tab_vocab, tab_bts = st.tabs(["영단어", "BTS"])
@@ -89,10 +95,17 @@ with tab_vocab:
 
 with tab_bts:
     st.header("BTS 소개")
-    st.write("BTS(방탄소년단)는 대한민국의 7인조 보이 그룹으로, 전 세계적으로 큰 인기를 얻고 있습니다.")
-    st.write("주요 정보:")
-    st.write("- 데뷔: 2013년")
-    st.write("- 멤버: RM, 진, 슈가, 제이홉, 지민, 뷔, 정국")
-    st.write("- 대표곡: 'Dynamite', 'Butter', 'Blood Sweat & Tears', 'Permission to Dance'")
-    st.write("더 알아보기:")
-    st.markdown("- [위키백과 - BTS](https://ko.wikipedia.org/wiki/BTS)\n- [공식 유튜브 채널](https://www.youtube.com/c/bangtantv)")
+    img_col, info_col = st.columns([2,3])
+    img_url = f"https://source.unsplash.com/800x500/?bts,kpop,concert&sig={st.session_state.bts_seed}"
+    with img_col:
+        st.image(img_url, use_column_width=True)
+        st.button("다른 사진 보기", on_click=refresh_bts, key="refresh_bts")
+        st.caption("이미지 검색: Unsplash (검색어: bts, kpop, concert)")
+    with info_col:
+        st.write("BTS(방탄소년단)는 대한민국의 7인조 보이 그룹으로, 전 세계적으로 큰 인기를 얻고 있습니다.")
+        st.write("주요 정보:")
+        st.write("- 데뷔: 2013년")
+        st.write("- 멤버: RM, 진, 슈가, 제이홉, 지민, 뷔, 정국")
+        st.write("- 대표곡: 'Dynamite', 'Butter', 'Blood Sweat & Tears', 'Permission to Dance'")
+        st.write("더 알아보기:")
+        st.markdown("- [위키백과 - BTS](https://ko.wikipedia.org/wiki/BTS)\n- [공식 유튜브 채널](https://www.youtube.com/c/bangtantv)")
